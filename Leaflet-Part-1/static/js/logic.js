@@ -4,7 +4,7 @@ var queryURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_mo
 // GET request
 d3.json(queryURL).then(function (data) {
     createFeatures(data.features);
-  });
+});
 
 //// createFeatures ////
 function createFeatures(earthquakeData) {
@@ -13,10 +13,24 @@ function createFeatures(earthquakeData) {
     function onEachFeature(feature, layer) {
         layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p>`);
     }
+
+    // markers
+    function pointToLayer(feature, loc) {
+        var marker = {
+            radius: feature.properties.mag ** 2 / 4,
+            fillColor: "#ff7800",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 1
+        };
+        return L.circleMarker(loc, marker);
+    }
   
     // geoJSON
     var earthquakes = L.geoJSON(earthquakeData, {
-        onEachFeature: onEachFeature
+        onEachFeature: onEachFeature,
+        pointToLayer: pointToLayer
     });
   
     createMap(earthquakes);
